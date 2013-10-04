@@ -52,9 +52,9 @@ namespace Lab3
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            joy.Poll((s) =>
+            joy.Poll((state) =>
             {
-                bool[] btns = s.GetButtons();
+                bool[] btns = state.GetButtons();
                 for (int i = 0; i < btns.Length; i++)
                 {
                     if (btns[i] && (i == 0 || i == 2))
