@@ -28,6 +28,7 @@ namespace Lab3
                 {
                     joystick = new SlimDX.DirectInput.Joystick(di, device.InstanceGuid);
                     Connected = true;
+                    joystick.RunControlPanel();
                     break;
                 }
                 catch
@@ -43,7 +44,8 @@ namespace Lab3
                 }
             }*/
 
-            joystick.Acquire();
+            if (Connected)
+                joystick.Acquire();
         }
 
         public void Poll(Action<JoystickState> f)
