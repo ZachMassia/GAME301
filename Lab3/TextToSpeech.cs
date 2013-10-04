@@ -10,11 +10,22 @@ namespace Lab3
 {
     class TextToSpeech
     {
+        bool talking;
         SpeechSynthesizer synth = new SpeechSynthesizer();
+
+        public TextToSpeech()
+        {
+            // Keeps the app from becoming unresponsive due to event spamming.
+            synth.SpeakCompleted += (s, e) => { talking = false; };
+        }
 
         public void Say(String s)
         {
-            synth.SpeakAsync(s);
+            if (!talking)
+            {
+                talking = true;
+                synth.SpeakAsync(s);
+            }
         }
     }
 }

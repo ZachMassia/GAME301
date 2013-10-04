@@ -12,40 +12,46 @@ namespace Lab3
         private SlimDX.DirectInput.Joystick joystick;
         private JoystickState               joyState = new JoystickState();
 
+        public bool JoystickIsConnected
+        {
+            get;
+            protected set;
+        }
+
         public Joystick()
         {
             var di = new DirectInput();
 
-            // Get the first device
+            // Get the first joystick.
             try
             {
-                var device = di.GetDevices()[0];
+                var device = di.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly)[0];
                 joystick = new SlimDX.DirectInput.Joystick(di, device.InstanceGuid);
             }
-            catch (IndexOutOfRangeException e)
+            catch 
             {
-                Console.WriteLine("No devices: {0}", e.Message);
-                Environment.Exit(1);
-            }
-            catch (DirectInputException e)
-            {
-                Console.WriteLine(e.Message);
-                Environment.Exit(1);
+                JoystickIsConnected = false;
+                return;
             }
 
-            foreach (DeviceObjectInstance deviceObject in joystick.GetObjects())
+        
+
+            /*foreach (DeviceObjectInstance deviceObject in joystick.GetObjects())
             {
                 if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
                 {
                     joystick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
                 }
-            }
+            }*/
 
             joystick.Acquire();
         }
 
         public void Poll(Action<JoystickState> f)
         {
+            if (!JoystickIsConnected)
+                return;
+
             if (joystick.Acquire().IsFailure)
                 return;
 
@@ -56,7 +62,8 @@ namespace Lab3
             if (Result.Last.IsFailure)
                 return;
 
-            // Joystick is all good, call the function
+            
+            // Joystick is all good, call the function.
             f(joyState);
         }
     }

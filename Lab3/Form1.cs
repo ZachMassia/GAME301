@@ -13,15 +13,56 @@ namespace Lab3
     public partial class Lab3 : Form
     {
         TextToSpeech tts = new TextToSpeech();
+        Joystick joy = new Joystick();
 
         public Lab3()
         {
             InitializeComponent();
         }
 
-        private void ttsBtn_Click(object sender, EventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
-            tts.Say(ttsTextBox.Text);
+            base.OnKeyDown(e);
+
+            switch (e.KeyCode)
+            {
+                case Keys.N:
+                    tts.Say("N key");
+                    break;
+                case Keys.Z:
+                    tts.Say("Zed key"); // Canadian pronounciation ;)
+                    break;
+            }
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+
+            switch (e.Button)
+            {
+                case System.Windows.Forms.MouseButtons.Left:
+                    tts.Say("Left mouse button");
+                    break;
+                case System.Windows.Forms.MouseButtons.Right:
+                    tts.Say("Right mouse button");
+                    break;
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            joy.Poll((s) =>
+            {
+                bool[] btns = s.GetButtons();
+                for (int i = 0; i < btns.Length; i++)
+                {
+                    if (btns[i])
+                    {
+                        tts.Say(String.Format("Joystick Button {0} pressed", i));
+                    }
+                }
+            });
         }
     }
 }
