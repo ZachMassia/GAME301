@@ -12,7 +12,7 @@ namespace Lab3
         private SlimDX.DirectInput.Joystick joystick;
         private JoystickState               joyState = new JoystickState();
 
-        public bool JoystickIsConnected
+        public bool Connected
         {
             get;
             protected set;
@@ -22,19 +22,18 @@ namespace Lab3
         {
             var di = new DirectInput();
 
-            // Get the first joystick.
-            try
+            foreach (var device in di.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
             {
-                var device = di.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly)[0];
-                joystick = new SlimDX.DirectInput.Joystick(di, device.InstanceGuid);
+                try
+                {
+                    joystick = new SlimDX.DirectInput.Joystick(di, device.InstanceGuid);
+                    Connected = true;
+                    break;
+                }
+                catch
+                {
+                }
             }
-            catch 
-            {
-                JoystickIsConnected = false;
-                return;
-            }
-
-        
 
             /*foreach (DeviceObjectInstance deviceObject in joystick.GetObjects())
             {
@@ -49,7 +48,7 @@ namespace Lab3
 
         public void Poll(Action<JoystickState> f)
         {
-            if (!JoystickIsConnected)
+            if (!Connected)
                 return;
 
             if (joystick.Acquire().IsFailure)

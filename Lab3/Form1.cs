@@ -57,7 +57,7 @@ namespace Lab3
                 bool[] btns = s.GetButtons();
                 for (int i = 0; i < btns.Length; i++)
                 {
-                    if (btns[i])
+                    if (btns[i] && (i == 0 || i == 2))
                     {
                         tts.Say(String.Format("Joystick Button {0} pressed", i));
                     }
