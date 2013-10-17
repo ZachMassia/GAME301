@@ -10,20 +10,42 @@ namespace Lab3
 {
     class TextToSpeech
     {
-        bool talking;
-        SpeechSynthesizer synth = new SpeechSynthesizer();
+        // File used for SayToFile()
+        public string OutputFile { get; set; }
+
+        // Keeps the app from becoming unresponsive due to event spamming.
+        private bool talking; 
+
+        private SpeechSynthesizer synth = new SpeechSynthesizer();
+
 
         public TextToSpeech()
         {
-            // Keeps the app from becoming unresponsive due to event spamming.
-            synth.SpeakCompleted += (s, e) => { talking = false; };
+            synth.SpeakCompleted += (s, e) => 
+            { 
+                talking = false; 
+                // Reset the output.
+                synth.SetOutputToDefaultAudioDevice();
+            };
+            // Set a default OutputFile.
+            OutputFile = "tts.wav";
         }
 
-        public void Say(String s)
+        public void Say(string s)
         {
             if (!talking)
             {
                 talking = true;
+                synth.SpeakAsync(s);
+            }
+        }
+
+        public void SayToFile(string s)
+        {
+            if (!talking)
+            {
+                talking = true;
+                synth.SetOutputToWaveFile(OutputFile);
                 synth.SpeakAsync(s);
             }
         }
